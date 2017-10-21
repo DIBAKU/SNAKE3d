@@ -100,7 +100,7 @@
     $(document).ready(function(){
         // the "href" attribute of the modal trigger must specify the modal ID that wants to be triggered
         $('.modal').modal();
-		alert("This page is in beta-testing and not related to other dibaku.de contents or services! Many functions are not already implemented and not all bugs are fixed.");
+		alert("This page is in beta-testing and not related to other dibaku.de contents or services! Many functions are not implemented and not every bug is fixed yet.");
     });
 
     var camera, scene, renderer, container;
@@ -364,6 +364,36 @@
 			camera.aspect = window.innerWidth / window.innerHeight;
     		camera.updateProjectionMatrix();
 			renderer.setSize(innerWidth,innerHeight);
+			//For touchScreens:
+			window.onclick = function(e){
+				
+				
+				if (eingabe === false) {
+					if(e.screenX < innerWidth / 2){
+						if (direction == "u") {
+							direction = "l";
+						} else if (direction == "d") {
+							direction = "r";
+						} else if (direction == "l") {
+							direction = "d";
+						} else if (direction == "r") {
+							direction = "u";
+						}
+                		eingabe = true;
+					}else{
+						if (direction == "u") {
+							direction = "r";
+						} else if (direction == "d") {
+							direction = "l";
+						} else if (direction == "l") {
+							direction = "u";
+						} else if (direction == "r") {
+							direction = "d";
+						}
+						eingabe = true;
+					}
+				}
+			};
 			
 		},1000);
 	}
