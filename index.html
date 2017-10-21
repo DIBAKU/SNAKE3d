@@ -54,6 +54,7 @@
 <br>
 
 <div class="row">
+	
 
     <div class="col s8">
         <img class="responsive-img animated zoomInUp" src="slogo2.png">
@@ -71,11 +72,22 @@
 
 </div>
 <div style="height: 90%;">
-    <div class="animated zoomInUp" id="Spiel" style="height: 100%;float:left; width: 80%"></div>
+    <div class="animated zoomInUp" id="Spiel" style="position: relative;height: 100%;float:left; width: 80%">
+		<div id="div_guiLeft" style="display:none;position: absolute; top: 20px; left: 5px; background: transparent;color: white; z-index: 2147483647; border-radius: 10px; opacity: 0.7; width:150px;">
+			<div class="container center-align">
+				<canvas id="myCanvas"></canvas>
+			</div>
+		</div>
+		<div id="div_guiRigth" style="display:none;position: absolute; top: 10px; right: 10px; background: orange;color: white; z-index: 2147483647; border-radius: 10px; opacity: 0.5; width:200px;">
+			<div class="container center-align">
+				<p id="lbl_fsGUI" class="flow-text"><b>SCORE:<br>0<br>LENGTH:<br>3</b></p>
+				
+			</div>
+		</div>
+	</div>
 <div style="height: 100%; width: 20%;float: right">
-    <canvas id="myCanvas" style="border:1px solid #000000;">
-    </canvas>
-	
+    
+
 <a href="about.html">Impressum</a>
 
 
@@ -113,6 +125,7 @@
 
 
     container = document.getElementById("Spiel");
+	
 
 
     init();
@@ -276,7 +289,6 @@
 
         renderer = new THREE.WebGLRenderer( { antialias: true } );
         let size = Math.min(container.offsetHeight, container.offsetWidth);
-        //renderer.setSize( container.offsetHeight, container.offsetHeight );
         renderer.setSize( size, size);
         container.appendChild( renderer.domElement );
 
@@ -288,8 +300,8 @@
 
     function canvasInit(){
 
-        c.width = innerWidth/100*20;
-        c.height = innerHeight/4*3;
+        c.width = innerWidth;
+        c.height = innerHeight;
 
         ctx.fillStyle="#FF0000";
         ctx.fillRect(10,10,50,50);
@@ -298,25 +310,76 @@
         ctx.fillRect(10,130,50,50);
     }
     function canvasRefresh(){
-        console.log("cRefresh");
-        ctx.fillStyle="#00FF00";
-        if(currentCanvasRow + 50 > c.height){
-            currentCanvasRow -= 60;
-            currentCanvasCol += 60;
-            canvasDown = !canvasDown;
-        }else if(currentCanvasRow < 10){
-            //alert("ende");
-            currentCanvasCol += 60;
-            canvasDown = !canvasDown;
-            currentCanvasRow += 60;
-        }
-        ctx.fillRect(currentCanvasCol,currentCanvasRow,50,50);
-        if(canvasDown){currentCanvasRow += 60;
-        }else{
-            currentCanvasRow -= 60;
-        }
+		if(meshes.length < 40){ 
+			ctx.fillStyle="#00FF00";
+			if(currentCanvasRow + 50 > c.height){
+				currentCanvasRow -= 60;
+				currentCanvasCol += 60;
+				canvasDown = !canvasDown;
+			}else if(currentCanvasRow < 10){
+				//alert("ende");
+				currentCanvasCol += 60;
+				canvasDown = !canvasDown;
+				currentCanvasRow += 60;
+			}
+			ctx.fillRect(currentCanvasCol,currentCanvasRow,50,50);
+			if(canvasDown){currentCanvasRow += 60;
+			}else{
+				currentCanvasRow -= 60;
+			}
+		}
+		
 
     }
+		
+	function enterFullscreen(element) {
+	    if(element.requestFullscreen) {
+		    element.requestFullscreen();
+	    } else if(element.mozRequestFullScreen) {
+		    element.mozRequestFullScreen();
+	    } else if(element.msRequestFullscreen) {
+		    element.msRequestFullscreen();
+	    } else if(element.webkitRequestFullscreen) {
+		    element.webkitRequestFullscreen();
+	    }
+	}
+		
+	function exitFullscreen() {
+		if(document.exitFullscreen) {
+			document.exitFullscreen();
+		} else if(document.mozCancelFullScreen) {
+			document.mozCancelFullScreen();
+		} else if(document.webkitExitFullscreen) {
+			document.webkitExitFullscreen();
+		}
+	}
+
+		
+	function goFullScreen(){
+		enterFullscreen(document.getElementById("Spiel"));
+		//alert(innerWidth + "  " + innerHeight);
+		setTimeout(function(){
+			document.getElementById("div_guiLeft").style.display = "block";
+			document.getElementById("div_guiRigth").style.display = "block";
+			camera.aspect = window.innerWidth / window.innerHeight;
+    		camera.updateProjectionMatrix();
+			renderer.setSize(innerWidth,innerHeight);
+			
+		},1000);
+	}
+		
+	function leaveFullscreen(){
+		exitFullscreen();
+		//alert(innerWidth + "  " + innerHeight);
+		setTimeout(function(){
+			camera.aspect = 1;
+    		camera.updateProjectionMatrix();
+			let size = Math.min(container.offsetHeight, container.offsetWidth);
+        	renderer.setSize( size, size);
+		},1000);
+	}	
+		
+	
 
     function startGameLoop(){
 
@@ -336,6 +399,7 @@
         setInterval(function() {
             doUpdate = true;
         }, diff);
+		goFullScreen();
     }
 
     function setDifficulty(diff){
@@ -407,8 +471,8 @@
     function incrementScore(){
         score+=100;
         canvasRefresh();
-        var lbl_gui = document.getElementById("lbl_gui");
-        lbl_gui.innerHTML = "SCORE: " + score + "<br>DIFFICULTY: " + difficulty;
+        var lbl_fsGUI = document.getElementById("lbl_fsGUI");
+        lbl_fsGUI.innerHTML = "<b>SCORE:<br>" + score + "<br>LENGTH:<br>" + (score/100 + 3) + "</b>";
     }
 
 
@@ -528,6 +592,7 @@
                     if(gameLost == 0){
                         var lbl_lostScore = document.getElementById("lbl_lostScore");
                         lbl_lostScore.innerHTML = score;
+						leaveFullscreen();
                         $('#modal3').modal('open');
                     }
                     scene.remove(meshes[gameLost]);
