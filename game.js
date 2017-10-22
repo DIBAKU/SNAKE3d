@@ -1,3 +1,7 @@
+if (/Mobi/.test(navigator.userAgent) && location.pathname != "/touch.html") {
+    location.replace("/touch.html");
+    
+}
 var camera, scene, renderer, container,eingabe,canvasDown,currentCanvasRow,currentCanvasCol,ctx,c,difficulty,score,fruit,cHeight,beginningBlockNumber,gameLost,direction,doUpdatem, geometry, material, material2, materialsnake, materialsnakehead, geometrysnake, texturesnake, texturesnakehead, edges, edges2, edges3, edges4, mesh,meshes, geometry2, material2, mesh2, geometry3, material3, mesh3, geometry4, material4, mesh4, texture, helper, controls, OrbitControls, sun;
 
 $(document).ready(function(){
@@ -23,8 +27,20 @@ $(document).ready(function(){
 
     container = document.getElementById("Spiel");
 	
-	alert("This page is in beta-testing and not related to other dibaku.de contents or services! Many functions are not implemented and not every bug is fixed yet.");
-
+	//alert("This page is in beta-testing and not related to other dibaku.de contents or services! Many functions are not implemented and not every bug is fixed yet.");
+	
+    //For smartphones:
+    if (/Mobi/.test(navigator.userAgent)) {
+    	$( window ).on( "orientationchange", function( event ) {
+            if(innerWidth > innerHeight){ //PORTRAIT
+                $('#modal5').modal('close');
+                $('#modal4').modal('open');
+            }else{ //LANDSCAPE
+                $('#modal4').modal('close');
+                $('#modal5').modal('open');
+            }
+        });
+	}
 	
     init();
     animate();
@@ -199,8 +215,8 @@ $(document).ready(function(){
 
     function canvasInit(){
 
-        c.width = innerWidth;
-        c.height = innerHeight;
+        c.width = Math.max(screen.width,screen.height);
+        c.height = Math.min(screen.width,screen.height) - 40;
 
         ctx.fillStyle="#FF0000";
         ctx.fillRect(10,10,50,50);
@@ -209,7 +225,6 @@ $(document).ready(function(){
         ctx.fillRect(10,130,50,50);
     }
     function canvasRefresh(){
-		if(meshes.length < 40){ 
 			ctx.fillStyle="#00FF00";
 			if(currentCanvasRow + 50 > c.height){
 				currentCanvasRow -= 60;
@@ -221,6 +236,7 @@ $(document).ready(function(){
 				canvasDown = !canvasDown;
 				currentCanvasRow += 60;
 			}
+        if(currentCanvasCol < Math.max(screen.width,screen.height)/3){ 
 			ctx.fillRect(currentCanvasCol,currentCanvasRow,50,50);
 			if(canvasDown){currentCanvasRow += 60;
 			}else{
@@ -311,24 +327,30 @@ $(document).ready(function(){
 	
 
     function startGameLoop(){
-
-        direction = "u";
-
-        if(difficulty == "EASY"){
-            diff = 350;
-        }else if(difficulty == "MEDIUM"){
-            diff = 200;
-        }else if(difficulty == "HARD"){
-            diff = 90;
+        
+        if (/Mobi/.test(navigator.userAgent) && innerWidth < innerHeight) {
+                $('#modal4').modal('open');
         }else{
-            diff = 200;
+            
+            $('#modal5').modal('close');
+            direction = "u";
+
+            if(difficulty == "EASY"){
+                diff = 350;
+            }else if(difficulty == "MEDIUM"){
+                diff = 200;
+            }else if(difficulty == "HARD"){
+                diff = 90;
+            }else{
+                diff = 200;
+            }
+
+
+            setInterval(function() {
+                doUpdate = true;
+            }, diff);
+            goFullScreen();
         }
-
-
-        setInterval(function() {
-            doUpdate = true;
-        }, diff);
-		goFullScreen();
     }
 
     function setDifficulty(diff){
