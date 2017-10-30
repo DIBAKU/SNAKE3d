@@ -2,8 +2,9 @@ if (/Mobi/.test(navigator.userAgent) && location.pathname != "/touch.html") {
     location.replace("/touch.html");
     
 }
-var camera, scene, renderer, container,eingabe,canvasDown,currentCanvasRow,currentCanvasCol,ctx,c,difficulty,score,fruit,cHeight,beginningBlockNumber,gameLost,direction,doUpdatem, geometry, material, material2, materialsnake, materialsnakehead, geometrysnake, texturesnake, texturesnakehead, edges, edges2, edges3, edges4, mesh,meshes, geometry2, material2, mesh2, geometry3, material3, mesh3, geometry4, material4, mesh4, texture, helper, controls, OrbitControls, sun;
-
+var camera, scene, renderer, container,eingabe,canvasDown,currentCanvasRow,currentCanvasCol,ctx,c,difficulty,score,fruit,beginningBlockNumber,gameLost,direction,doUpdatem, geometry, material, material2, materialsnake, materialsnakehead, geometrysnake, texturesnake, texturesnakehead, edges, edges2, edges3, edges4, mesh,meshes, geometry2, material2, mesh2, geometry3, material3, mesh3, geometry4, material4, mesh4, texture, helper, controls, OrbitControls, sun, camerasettings, camerasettings2;
+var cameramode="ThirdPerson";
+//var cHeight;
 $(document).ready(function(){
     // the "href" attribute of the modal trigger must specify the modal ID that wants to be triggered
     $('.modal').modal();
@@ -13,7 +14,7 @@ $(document).ready(function(){
     direction = "u";
     gameLost = -1;
     beginningBlockNumber = 3;
-    cHeight ;//offset 0.3? 0.5?
+    //cHeight ;//offset 0.3? 0.5?
     fruit = [];
     score = 0;
     difficulty = "MEDIUM";
@@ -40,8 +41,10 @@ $(document).ready(function(){
                 $('#modal5').modal('open');
             }
         });
-	}
+    }
+    
 	
+
     init();
     animate();
 	
@@ -53,14 +56,15 @@ $(document).ready(function(){
 
         document.addEventListener("keydown", onDocumentKeyDown, false);
 
-        camera = new THREE.PerspectiveCamera( 70, 1, 0.01, 10 );
-        camera.position.z = cHeight;
+        camera = new THREE.TargetCamera( 70, 1, 0.01, 10 );
+        /*camera.position.z = cHeight;
         camera.position.x = 0.5;
         camera.position.y = 1;
         camera.rotation.x = Math.PI/2 ;
+        */
         scene = new THREE.Scene();
 
-        scene = new THREE.Scene();
+        
 
 
 
@@ -99,7 +103,7 @@ $(document).ready(function(){
         var loader = new THREE.TextureLoader();
         loader.load( 'texture_sun_prev2.jpg',
                 function ( texture ) {
-                    var geometry = new THREE.SphereGeometry(3, 40, 40 );
+                    var geometry = new THREE.SphereGeometry(4, 40, 40 );
                     var material = new THREE.MeshBasicMaterial( { map: texture, overdraw: 0.5 } );
                     sun = new THREE.Mesh( geometry, material );
                     sun.position.z = -4.5;
@@ -187,6 +191,31 @@ $(document).ready(function(){
             meshes[i].position.x = -i*0.11;
 
         }
+        
+//Erstellen des Target
+
+        camerasettings = {    
+        name: 'myTarget',
+        targetObject: meshes[0],
+        cameraRotation: new THREE.Euler( -Math.PI/4+0.1, 0, 0 ),
+        cameraPosition: new THREE.Vector3(0, 0, 0.45),
+        fixed: false,
+        stiffness: 0.08,
+        matchRotation: true,
+        }
+
+        camerasettings2 = {    
+        name: 'myTarget2',
+        targetObject: meshes[0],
+        cameraRotation: new THREE.Euler( 0, 0, 0 ),
+        cameraPosition: new THREE.Vector3(0, 0, 0),
+        fixed: false,
+        stiffness: 0.1,
+        matchRotation: true,}
+
+        camera.addTarget(camerasettings);
+        camera.setTarget( 'myTarget' );
+        meshes[0].rotation.x = Math.PI/2;
 
         helper = new THREE.GridHelper( 3.31, 30, 0x444444, 0x888888);
         helper.position.x = 0.05;
@@ -284,7 +313,9 @@ $(document).ready(function(){
 				
 				
 				if (eingabe === false) {
+                    
 					if(e.screenX < innerWidth / 2){
+                        meshes[0].rotation.y += Math.PI/2;
 						if (direction == "u") {
 							direction = "l";
 						} else if (direction == "d") {
@@ -296,6 +327,7 @@ $(document).ready(function(){
 						}
                 		eingabe = true;
 					}else{
+                        meshes[0].rotation.y -= Math.PI/2;
 						if (direction == "u") {
 							direction = "r";
 						} else if (direction == "d") {
@@ -334,6 +366,7 @@ $(document).ready(function(){
             
             $('#modal5').modal('close');
             direction = "u";
+            meshes[0].rotation.y =0;
 
             if(difficulty == "EASY"){
                 diff = 350;
@@ -359,7 +392,20 @@ $(document).ready(function(){
         lbl_gui.innerHTML = lbl_gui.innerHTML = "SCORE: " + score + "<br>DIFFICULTY: " + difficulty;
 
     }
-
+  
+function setModus(mode){
+        cameramode = mode;
+        
+        if (cameramode === "FirstPerson"){
+            camera.addTarget(camerasettings2);
+            camera.setTarget( 'myTarget2' );
+            scene.remove(meshes[0]);
+        }
+        else {
+            camera.addTarget(camerasettings);
+            camera.setTarget( 'myTarget' );    
+        }
+    }
 
     function genFruits(){
         for (var z = fruit.length; z < 5; z++) {
@@ -376,6 +422,8 @@ $(document).ready(function(){
         for(var i = meshes.length - 1; i > 0;i--){
             meshes[i].position.x = meshes[i-1].position.x;
             meshes[i].position.y = meshes[i-1].position.y;
+
+
         }
     }
 
@@ -417,6 +465,7 @@ $(document).ready(function(){
         meshes[meshes.length - 1].position.x = meshes[meshes.length - 2].position.x;
         meshes[meshes.length - 1].position.y = meshes[meshes.length - 2].position.y;
 
+
     }
 
     function incrementScore(){
@@ -428,7 +477,7 @@ $(document).ready(function(){
 
 
 
-    function cameraHeight() {
+    /*function cameraHeight() {
         var diffRate = 1;
         var limit = 1.2;
         if(difficulty == "EASY") {
@@ -449,45 +498,15 @@ $(document).ready(function(){
         }
 
         return cHeight;
-    }
+    }*/
 
-    function cameraUpdate() {
+    /*function cameraUpdate() {
         if (gameLost === -1) {
 
             camera.position.z = cameraHeight();
-
-            if (direction == "r") {
-                camera.position.x = meshes[0].position.x - cameraHeight();
-                camera.position.y = meshes[0].position.y;
-                camera.rotation.x = 0;
-                camera.rotation.y = 315 * Math.PI / 180;
-                camera.rotation.z = 270 * Math.PI / 180;
-
-
-            } else if (direction == "l") {
-                camera.position.x = meshes[0].position.x + cameraHeight();
-                camera.position.y = meshes[0].position.y;
-                camera.rotation.x = 0;
-                camera.rotation.y = 45 * Math.PI / 180;
-                camera.rotation.z = 90 * Math.PI / 180;
-
-            } else if (direction == "u") {
-                camera.position.x = meshes[0].position.x;
-                camera.position.y = meshes[0].position.y - cameraHeight();
-                camera.rotation.x = Math.PI / 4;
-                camera.rotation.y = 0;
-                camera.rotation.z = 0;
-
-            } else if (direction == "d") {
-                camera.position.x = meshes[0].position.x;
-                camera.position.y = meshes[0].position.y + cameraHeight();
-                camera.rotation.x = 315 * Math.PI / 180;
-                camera.rotation.y = 0;
-                camera.rotation.z = 180 * Math.PI / 180;
-
-            }
+            
         }
-    }
+    }*/
 
 
     function onDocumentKeyDown(event) {
@@ -495,7 +514,7 @@ $(document).ready(function(){
         //alert(keyCode);
         if (eingabe === false) {
             if (keyCode == 37) { //LEFT
-
+                meshes[0].rotation.y += Math.PI/2;
                 if (direction == "u") {
                     direction = "l";
                 } else if (direction == "d") {
@@ -508,7 +527,7 @@ $(document).ready(function(){
                 eingabe = true;
 
             } else if (keyCode == 39) { //RIGHT
-
+                meshes[0].rotation.y -= Math.PI/2;
                 if (direction == "u") {
                     direction = "r";
                 } else if (direction == "d") {
@@ -593,7 +612,7 @@ $(document).ready(function(){
                     down();
                 }
 
-                cameraUpdate();
+                //cameraUpdate();
 
                 for (var i = 1; i < meshes.length; i++) {
                     if (meshes[i].position.x == meshes[0].position.x && meshes[i].position.y == meshes[0].position.y) {
@@ -606,7 +625,8 @@ $(document).ready(function(){
             doUpdate = false;
             eingabe = false;
         }
-        cameraUpdate();
+       // cameraUpdate();
+        camera.update();
         renderer.render( scene, camera );
 
 
