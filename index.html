@@ -1,94 +1,120 @@
 <!DOCTYPE html>
 <html>
+
 <head lang="en">
     <meta charset="UTF-8">
     <title>3D-Snake</title>
-    
-    <style>html, body {height: 98%; background-color: black; overflow-x: hidden; overflow-y: auto;}</style>
+
+    <style>
+        html,
+        body {
+            height: 98%;
+            background-color: black;
+            overflow-x: hidden;
+            overflow-y: auto;
+        }
+    </style>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.100.2/css/materialize.min.css" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.5.2/animate.css" />
     <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons" />
-    
+
+    <link rel="manifest" href="/manifest.json">
+
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/87/three.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-mobile/1.4.5/jquery.mobile.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.100.2/js/materialize.min.js"></script>
-    
+
+    <script src="THREE.TargetCamera.min.js"></script>
     <script src="game.js"></script>
 
 </head>
+
 <body>
 
-<div id="modal1" style="width:30%;" class="modal white">
-    <div class="modal-content">
-        <h4 class="center-align">HOW TO PLAY?</h4><br>
-        <img style="width:100%;" class="responsive-img animated zoomInUp center-align" src="twoarrowKeys.png">
-        <h5 class="center-align">JUST USE YOUR ARROW-KEYS</h5>
+    <div id="modal1" style="width:30%;" class="modal white">
+        <div class="modal-content">
+            <h4 class="center-align">HOW TO PLAY?</h4><br>
+            <img style="width:100%;" class="responsive-img animated zoomInUp center-align" src="twoarrowKeys.png">
+            <h5 class="center-align">JUST USE YOUR ARROW-KEYS</h5>
 
-    </div>
-    <div class="modal-footer grey">
-        <a href="#!" class="modal-action modal-close waves-effect waves-green btn-flat white-text">GOT IT!</a>
-    </div>
-</div>
-
-<div id="modal2" style="width:30%;" class="modal white">
-    <div class="modal-content">
-        <h4 class="center-align">DIFFICULTY:</h4><br>
-        <a style="width:100%" onclick="setDifficulty('EASY');" class="waves-effect waves-light center btn green animated flipInY">EASY</a><br><br>
-        <a style="width:100%" onclick="setDifficulty('MEDIUM');" class="waves-effect waves-light center btn yellow darken-3 animated flipInY">MEDIUM</a><br><br>
-        <a style="width:100%" onclick="setDifficulty('HARD');" class="waves-effect waves-light center btn red animated flipInY">HARD</a>
-
-    </div>
-    <div class="modal-footer grey">
-        <a href="#!" class="modal-action modal-close waves-effect waves-green btn-flat white-text">DONE!</a>
-    </div>
-</div>
-
-<div id="modal3" style="width:30%;" class="modal white">
-    <div class="modal-content">
-        <h4 class="center-align">WELL PLAYED!</h4><br>
-        <h5 class="center-align">YOUR SCORE:</h5><br>
-        <h3 id="lbl_lostScore" class="center-align green-text">1000</h3><br>
-
-    </div>
-    <div class="modal-footer grey">
-        <a onclick="location.reload(false);" href="#!" class="modal-action modal-close waves-effect waves-green btn-flat white-text">OK!</a>
-    </div>
-</div>
-
-<br>
-
-<div class="row">
-	
-
-    <div class="col s8">
-        <img class="responsive-img animated zoomInUp" src="slogo2.png">
+        </div>
+        <div class="modal-footer grey">
+            <a href="#!" class="modal-action modal-close waves-effect waves-green btn-flat white-text">GOT IT!</a>
+        </div>
     </div>
 
-    <div class="col s3">
-        <a style="width:30%" class="waves-effect waves-light center btn green animated flipInY" onclick="startGameLoop();"><i class="material-icons">play_arrow</i></a>
-        <a style="width:30%" class="waves-effect waves-light btn center blue animated flipInY" href="about.html"><i class="material-icons">help</i></a>
-        <a style="width:30%" class="waves-effect waves-light btn red center animated flipInY" onclick="$('#modal2').modal('open');"><i class="material-icons">settings</i></a>
-        <p id="lbl_gui" class="flow-text white-text center-align animated flipInY">SCORE: 0<br>DIFFICULTY: MEDIUM</p>
+    <div id="modal2" style="width:30%;" class="modal white">
+        <div class="modal-content">
+            <h4 class="center-align">DIFFICULTY:</h4><br>
+            <a style="width:100%" onclick="setDifficulty('EASY');" class="waves-effect waves-light center btn green animated flipInY">EASY</a><br><br>
+            <a style="width:100%" onclick="setDifficulty('MEDIUM');" class="waves-effect waves-light center btn yellow darken-3 animated flipInY">MEDIUM</a><br><br>
+            <a style="width:100%" onclick="setDifficulty('HARD');" class="waves-effect waves-light center btn red animated flipInY">HARD</a>
+
+        </div>
+        <div class="modal-footer grey">
+            <a href="#!" class="modal-action modal-close waves-effect waves-green btn-flat white-text">DONE!</a>
+        </div>
+    </div>
+
+    <div id="modal3" style="width:30%;" class="modal white">
+        <div class="modal-content">
+            <h4 class="center-align">WELL PLAYED!</h4><br>
+            <h5 class="center-align">YOUR SCORE:</h5><br>
+            <h3 id="lbl_lostScore" class="center-align green-text">1000</h3><br>
+
+        </div>
+        <div class="modal-footer grey">
+            <a onclick="location.reload(false);" href="#!" class="modal-action modal-close waves-effect waves-green btn-flat white-text">OK!</a>
+        </div>
+    </div>
+
+    <div id="modal4" style="width:70%;" class="modal white">
+        <div class="modal-content grey darken-4 white-text">
+            <h1 class="center-align">Turn your device to start game!</h1>
+            <img class="responsive-img" src="rotate.gif" style="width:100%">
+        </div>
+    </div>
+
+    <div id="modal5" style="width:70%;" class="modal white">
+        <div class="modal-content grey darken-4 white-text center-align">
+            <h1>Click here to start game:</h1>
+            <a style="width:80%;" class="waves-effect waves-light center btn btn-large green animated flipInY" onclick="startGameLoop();"><i class="material-icons">play_arrow</i></a>
+        </div>
+    </div>
+
+    <br>
+
+    <div class="row center-align">
+
+
+
+        <img class="responsive-img animated zoomInUp" style="width:100%;" src="slogo2.png">
+
+        <br><br>
+        <a style="width:30%;" class="waves-effect waves-light center btn btn-large green animated flipInY" onclick="startGameLoop();"><i class="material-icons">play_arrow</i></a>
+        <a style="width:30%" class="waves-effect waves-light btn btn-large center blue animated flipInY" href="about.html"><i class="material-icons">help</i></a>
+        <a style="width:30%" class="waves-effect waves-light btn btn-large red center animated flipInY" onclick="$('#modal2').modal('open');"><i class="material-icons">settings</i></a>
+        <p id="lbl_gui" class="flow-text white-text center-align animated flipInY">DIFFICULTY: MEDIUM</p>
+
+
+
+
 
     </div>
-    <div class="col s1"></div>
 
-
-</div>
-<div style="height: 90%;">
-    <div class="animated zoomInUp" id="Spiel" style="position: relative;height: 100%;float:left; width: 80%">
-		<div id="div_guiLeft" style="display:none;position: absolute; top: 20px; left: 5px; background: transparent;color: white; z-index: 2147483647; border-radius: 10px; opacity: 0.7; width:150px;">
-			<div class="container center-align">
-				<canvas id="myCanvas"></canvas>
-			</div>
-		</div>
-		<div id="div_guiRigth" style="display:none;position: absolute; top: 10px; right: 10px; background: orange;color: white; z-index: 2147483647; border-radius: 10px; opacity: 0.5; width:200px;">
-			<div class="container center-align">
-				<p id="lbl_fsGUI" class="flow-text"><b>SCORE:<br>0<br>LENGTH:<br>3</b></p>
-				
-			</div>
-		</div>
-	</div>
+    <div class="animated zoomInUp" id="Spiel" style="position: relative;height: 100%; width: 100%">
+        <div id="div_guiLeft" style="display:none;position: absolute; top: 20px; left: 5px; background: transparent;color: white; z-index: 2147483647; border-radius: 10px; opacity: 0.7; width:150px;">
+            <div class="container center-align">
+                <canvas id="myCanvas"></canvas>
+            </div>
+        </div>
+        <div id="div_guiRigth" style="display:none;position: absolute; top: 10px; right: 10px; background: orange;color: white; z-index: 2147483647; border-radius: 10px; opacity: 0.5; width:200px;">
+            <div class="container center-align">
+                <p id="lbl_fsGUI" class="flow-text"><b>SCORE:<br>0<br>LENGTH:<br>3</b></p>
+            </div>
+        </div>
+    </div>
 
 
 
@@ -96,6 +122,8 @@
 
 
 
-    
+
+
 </body>
+
 </html>

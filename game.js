@@ -1,7 +1,8 @@
+/*
 if (/Mobi/.test(navigator.userAgent) && location.pathname != "/touch.html") {
     location.replace("/touch.html");
-
 }
+*/
 var camera, scene, renderer, container, eingabe, canvasDown, currentCanvasRow, currentCanvasCol, ctx, c, difficulty, score, fruit, beginningBlockNumber, gameLost, direction, doUpdatem, geometry, material, material2, materialsnake, materialsnakehead, geometrysnake, texturesnake, texturesnakehead, edges, edges2, edges3, edges4, mesh, meshes, geometry2, material2, mesh2, geometry3, material3, mesh3, geometry4, material4, mesh4, texture, helper, controls, OrbitControls, sun, camerasettings, camerasettings2;
 var cameramode = "ThirdPerson";
 //var cHeight;
@@ -31,6 +32,7 @@ $(document).ready(function() {
     //alert("This page is in beta-testing and not related to other dibaku.de contents or services! Many functions are not implemented and not every bug is fixed yet.");
 
     //For smartphones:
+    /*
     if (/Mobi/.test(navigator.userAgent)) {
         $(window).on("orientationchange", function(event) {
             if (innerWidth > innerHeight) { //PORTRAIT
@@ -42,6 +44,7 @@ $(document).ready(function() {
             }
         });
     }
+    */
 
 
 
