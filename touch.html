@@ -49,7 +49,12 @@
             <h4 class="center-align">DIFFICULTY:</h4><br>
             <a style="width:100%" onclick="setDifficulty('EASY');" class="waves-effect waves-light center btn green animated flipInY">EASY</a><br><br>
             <a style="width:100%" onclick="setDifficulty('MEDIUM');" class="waves-effect waves-light center btn yellow darken-3 animated flipInY">MEDIUM</a><br><br>
-            <a style="width:100%" onclick="setDifficulty('HARD');" class="waves-effect waves-light center btn red animated flipInY">HARD</a>
+            <a style="width:100%" onclick="setDifficulty('HARD');" class="waves-effect waves-light center btn red animated flipInY">HARD</a><br><br>
+            <h6 class="center-align">MODUS:</h6>
+            <input onclick="setModus('ThirdPerson');" class="with-gap" name="group1" type="radio" id="btn_tp"  checked/>
+            <label for="btn_tp">ThirdPerson</label><br>
+            <input onclick="setModus('FirstPerson');" class="with-gap" name="group1" type="radio" id="btn_fp"  />
+            <label for="btn_fp">FirstPerson</label>
 
         </div>
         <div class="modal-footer grey">
